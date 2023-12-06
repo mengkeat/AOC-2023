@@ -1,9 +1,9 @@
 const filetext = [...(await Bun.file("input05.txt").text()).trim().split("\n").map((l) => l.trim()), ""]
-const seeds = filetext[0].match(/\d+/g)?.map((n) => parseInt(n))
+const seeds: number[] = filetext[0].match(/\d+/g)?.map((n) => parseInt(n))
 
-let eleMap = []
-let curr = []
-filetext.slice(2).forEach((l) => {
+let eleMap: [number, number, number][][] = []
+let curr: [number, number, number][] = []
+filetext.slice(2).forEach((l: string) => {
     const nums = (l.match(/\d+/g) || []).map((n) => parseInt(n))
     if(nums.length >0) {
         curr.push(nums)
@@ -14,9 +14,9 @@ filetext.slice(2).forEach((l) => {
         curr = []
     }
 })
-const eleRevMap = eleMap.map((l) => l.map(([dst, src, len]) => [src, dst, len])).reverse()
+const eleRevMap: [number, number, number][][] = eleMap.map((l) => l.map(([dst, src, len]) => [src, dst, len])).reverse()
 
-const propagate = (s, m) => {
+const propagate = (s: number, m: [number, number, number][]) => {
     for(let [dst, src, l] of m) {
         if(s >=src && s <src +l) {
             s = dst + (s - src)
@@ -26,12 +26,12 @@ const propagate = (s, m) => {
     return s
 }
 
-const trace = (s, mapping) => {
+const trace = (s: number, mapping: [number, number, number][][]) => {
     mapping.forEach((m) => s = propagate(s, m))
     return s
 }
-const trace_forward = (s) => trace(s, eleMap)
-const trace_reverse = (s) => trace(s, eleRevMap)
+const trace_forward = (s: number) => trace(s, eleMap)
+const trace_reverse = (s: number) => trace(s, eleRevMap)
 
 const p1 = Math.min(...seeds.map(trace_forward))
 console.log(p1)
@@ -49,7 +49,7 @@ for(let m of eleMap) {
     }
 }
 
-const inSeedRange = (v) => {
+const inSeedRange = (v: number) => {
     for(let i=0; i<seeds.length; i+=2) {
         if(v >= seeds[i] && v < seeds[i]+seeds[i+1]) {
             return true
